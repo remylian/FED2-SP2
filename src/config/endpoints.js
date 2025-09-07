@@ -9,6 +9,7 @@
 export const API_BASE = "https://v2.api.noroff.dev";
 
 //Auth:
+export const AUTH_CREATE_API_KEY = `${API_BASE}/auth/create-api-key`;
 export const AUTH_REGISTER = `${API_BASE}/auth/register`;
 export const AUTH_LOGIN = `${API_BASE}/auth/login`;
 
