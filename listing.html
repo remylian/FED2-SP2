@@ -1,1 +1,87 @@
-<!-- Single listing view + bid history + place-bid form. -->
+<!-- Single listing view + bid history + place-bid form. --><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auction House — Listing</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <!-- Header -->
+  <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
+    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <a href="/index.html" class="text-lg font-semibold">Auction House</a>
+      <div class="flex items-center gap-4">
+        <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
+        <a id="auth-links" href="/login.html" class="text-sm text-blue-600 hover:underline">Log in</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <a href="/index.html" class="mb-4 inline-block text-sm text-blue-600 hover:underline">← Back to listings</a>
+
+    <h1 id="listing-title" class="mb-3 text-3xl font-bold">Loading…</h1>
+    <p id="listing-subtitle" class="mb-6 text-sm text-gray-600"></p>
+
+    <section class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Gallery -->
+      <div class="lg:col-span-2 overflow-hidden rounded-xl border bg-white shadow-sm">
+        <div id="listing-gallery" class="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3">
+          <!-- images inserted here -->
+        </div>
+        <div id="listing-description" class="border-t p-4 text-sm leading-6 text-gray-800">
+          <!-- description -->
+        </div>
+      </div>
+
+      <!-- Bidding / Meta -->
+      <aside class="rounded-xl border bg-white p-6 shadow-sm">
+        <div class="mb-4">
+          <div class="text-sm text-gray-500">Current highest bid</div>
+          <div id="listing-highest" class="text-2xl font-semibold text-gray-900">0</div>
+        </div>
+
+        <div class="mb-4">
+          <div class="text-sm text-gray-500">Ends</div>
+          <div id="listing-ends" class="font-medium">—</div>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-sm text-gray-500">Seller</div>
+          <div id="listing-seller" class="font-medium">—</div>
+        </div>
+
+        <form id="bid-form" class="space-y-3">
+          <label for="bid-amount" class="block text-sm font-medium">Your bid (credits)</label>
+          <input id="bid-amount" name="amount" type="number" min="1" step="1"
+                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
+                 placeholder="Enter an amount" />
+          <p id="bid-feedback" class="min-h-5 text-sm" role="alert" aria-live="polite"></p>
+          <button id="bid-submit" type="submit"
+                  class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
+            Place bid
+          </button>
+        </form>
+      </aside>
+    </section>
+
+    <!-- Bid history -->
+    <section aria-labelledby="bid-history-heading" class="rounded-xl border bg-white p-6 shadow-sm">
+      <h2 id="bid-history-heading" class="mb-4 text-xl font-semibold">Bid history</h2>
+      <ul id="bid-history" class="space-y-2"></ul>
+      <p id="bid-history-empty" class="mt-2 text-sm text-gray-500">No bids yet.</p>
+    </section>
+  </main>
+
+  <footer class="mt-16 border-t bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
+      © <span id="year"></span> Auction House
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

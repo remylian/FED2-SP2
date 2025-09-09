@@ -1,21 +1,82 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-    <script type="module"  defer src="/src/main.js"></script>
-  </head>
-  <body>
-    <header>
-      <h1></h1>
-      <nav></nav>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auction House — Home</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <!-- Header -->
+  <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
+    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <a href="/index.html" class="text-lg font-semibold">Auction House</a>
+      <div class="flex items-center gap-4">
+        <!-- Credits badge (initHeader handles this) -->
+        <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
+        <a id="auth-links" href="/login.html" class="text-sm text-blue-600 hover:underline">Log in</a>
+      </div>
+    </nav>
+  </header>
 
-    </header>
-    
-    <main></main>
-    
-    <footer></footer>
-  </body>
+  <!-- Main content -->
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <h1 class="mb-6 text-3xl font-bold">Active Listings</h1>
+
+    <!-- Search + filter -->
+    <section aria-labelledby="search-section" class="mb-8">
+      <h2 id="search-section" class="sr-only">Search listings</h2>
+      <form id="search-form" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <label for="search-input" class="sr-only">Search</label>
+        <input id="search-input" name="q" type="search"
+               class="flex-1 rounded-lg border px-3 py-2 outline-none focus:ring"
+               placeholder="Search listings..." />
+        <button type="submit"
+                class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+          Search
+        </button>
+      </form>
+    </section>
+
+    <!-- Listings grid -->
+    <section aria-labelledby="listings-heading">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 id="listings-heading" class="text-xl font-semibold">Browse items</h2>
+        <div class="flex gap-2">
+          <label for="sort" class="sr-only">Sort by</label>
+          <select id="sort" name="sort"
+                  class="rounded-lg border px-2 py-1 text-sm outline-none focus:ring">
+            <option value="endsAt">Ending soon</option>
+            <option value="created">Newest first</option>
+            <option value="title">Title</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listings-grid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Listing cards inserted here -->
+      </div>
+
+      <p id="listings-empty" class="mt-4 text-sm text-gray-500">
+        No listings found.
+      </p>
+    </section>
+
+    <!-- Pagination -->
+    <nav id="pagination" class="mt-8 flex justify-center gap-2">
+      <!-- Page buttons inserted here -->
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 border-t bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
+      © <span id="year"></span> Auction House
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
 </html>
