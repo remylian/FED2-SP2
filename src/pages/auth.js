@@ -1,229 +1,126 @@
-import { postJSON, getJSON } from "../api/client.js";
-import { handleError } from "../utils/handleError.js";
-import {
-  AUTH_LOGIN,
-  AUTH_REGISTER,
-  AUTH_CREATE_API_KEY,
-  PROFILE_URL,
-} from "../config/endpoints.js";
+// src/pages/auth.js
+import { login, register, createApiKey } from "../api/auth.js";
+import { saveSession } from "../utils/session.js";
+import { refreshCreditsFromServer } from "../utils/credits.js";
+import { makeFeedback, makeLoading } from "../ui/feedback.js";
+import { isNoroffStudentEmail } from "../utils/validators.js";
+import { initHeader } from "../ui/header.js";
 
 /**
- * Persist minimal auth session.
- * @param {{ accessToken: string, name: string, email?: string, avatar?: any, credits?: number, apiKey?: string }} payload
+ * Wire the Login form:
+ * - Basic field checks
+ * - Login → ensure API key → save session → refresh credits → redirect
+ * - Inline feedback + loading via ui/feedback.js
+ * @returns {void}
  */
-function saveSession(payload) {
-  const { accessToken, name, email = "", avatar = null, credits = 0, apiKey = "" } = payload;
-  localStorage.setItem("auth.token", accessToken);
-  if (apiKey) localStorage.setItem("auth.apiKey", apiKey); // ← store only when present
-  localStorage.setItem("auth.user", JSON.stringify({ name, email, avatar, credits }));
-  localStorage.setItem("auth.timestamp", new Date().toISOString());
-}
+function wireLogin() {
+  const form = document.getElementById("login-form");
+  if (!form) return;
 
-/**
- * Create a Noroff API key for authoritative actions.
- * Requires a valid Bearer token.
- * @param {string} token
- * @returns {Promise<string>} - API key string or empty string on failure
- */
+  const feedback = makeFeedback("login-feedback");
+  const setLoading = makeLoading("login-submit", "login-spinner");
 
-async function createApiKey(token) {
-  // The API expects a small payload with a name/label for the key.
-  const payload = { name: "auction-house-key" };
-  const [res, err] = await handleError(postJSON(AUTH_CREATE_API_KEY, payload, { token }));
-  if (err) {
-    console.warn("Failed to create API key:", err);
-    return "";
-  }
-  // Common responses: { data: { key: "…" } } or { key: "…" }
-  const key = res?.data?.key ?? res?.key ?? "";
-  return typeof key === "string" ? key : "";
-}
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    feedback("");
+    setLoading(true);
 
-
-/**
- * Fetch latest credits for a user after login.
- * @param {string} name - profile handle
- * @param {string} token - bearer token
- * @param {string} [apiKey] - Noroff API key (optional but recommended)
- * @returns {Promise<number>} - credits value or 0
- */
-
-async function fetchCredits(name, token, apiKey) {
-  const url = PROFILE_URL(name);
-  const [data, error] = await handleError(getJSON(url, { token, apiKey }));
-  if (error) return 0;
-  const credits = Number(data?.data?.credits ?? 0);
-  return Number.isFinite(credits) ? credits : 0;
-}
-
-/**
- * Toggle button loading state and spinner visibility.
- * @param {HTMLButtonElement} btn
- * @param {HTMLElement} spinner
- * @param {boolean} isLoading
- */
-
-function setLoading(btn, spinner, isLoading) {
-  btn.disabled = isLoading;
-  if (spinner) spinner.classList.toggle("hidden", !isLoading);
-}
-
-/**
- * Show inline feedback text (error or success).
- * @param {HTMLElement} el
- * @param {string} message
- * @param {"error"|"success"} [type="error"]
- */
-
-function showFeedback(el, message, type = "error") {
-  if (!el) return;
-  el.textContent = message;
-  el.classList.toggle("text-red-600", type === "error");
-  el.classList.toggle("text-emerald-600", type === "success");
-}
-
-/**
- * Basic client-side guard for Noroff student emails.
- * Server still performs authoritative validation.
- * @param {string} email
- * @returns {boolean}
- */
-
-function isNoroffStudentEmail(email) {
-  return /^[a-zA-Z0-9._%+-]+@stud\.noroff\.no$/.test(email.trim());
-}
-
-/**
- * Initialize auth page: binds submit handlers for Login and Register.
- */
-
-function initAuthPage() {
-  // --- Login wiring ---
-  const loginForm = document.getElementById("login-form");
-  const loginFeedback = document.getElementById("login-feedback");
-  const loginBtn = document.getElementById("login-submit");
-  const loginSpinner = document.getElementById("login-spinner");
-
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      showFeedback(loginFeedback, "");
-      setLoading(loginBtn, loginSpinner, true);
-
-      const form = Object.fromEntries(new FormData(loginForm));
-      const email = String(form.email || "").trim();
-      const password = String(form.password || "");
+    try {
+      const fd = new FormData(form);
+      const email = String(fd.get("email") || "").trim();
+      const password = String(fd.get("password") || "");
 
       if (!email || !password) {
-        showFeedback(loginFeedback, "Please enter your email and password.");
-        setLoading(loginBtn, loginSpinner, false);
+        feedback("Please enter your email and password.");
         return;
       }
 
-      const [res, err] = await handleError(
-        postJSON(AUTH_LOGIN, { email, password })
-      );
+      // 1) Login -> token + identity
+      const { accessToken, name, avatar, email: respEmail } = await login(email, password);
 
-      if (err) {
-        // Try to surface API-provided message if present
-        const apiMsg =
-          (err.body && (err.body.errors?.[0]?.message || err.body.message)) ||
-          err.message;
-        showFeedback(loginFeedback, apiMsg || "Login failed. Please try again.");
-        setLoading(loginBtn, loginSpinner, false);
-        return;
+      // 2) API key: reuse or create
+      let apiKey = localStorage.getItem("auth.apiKey") || "";
+      if (!apiKey) {
+        apiKey = await createApiKey(accessToken);
       }
 
-      // Expect accessToken + name from login response
-      const accessToken = res?.data?.accessToken || res?.accessToken;
-      const name = res?.data?.name || res?.name;
-      const avatar = res?.data?.avatar ?? res?.avatar ?? null;
-      if (!accessToken || !name) {
-        showFeedback(loginFeedback, "Login response was missing required fields.");
-        setLoading(loginBtn, loginSpinner, false);
-        return;
-      }
+      // 3) Save session (credits=0 for now), then refresh credits centrally
+      saveSession({ accessToken, apiKey, name, email: respEmail || email, avatar, credits: 0 });
+      await refreshCreditsFromServer();
 
-  
-  // Reuse existing API key if available; otherwise create one
-  const existingApiKey = localStorage.getItem("auth.apiKey") || "";
-  const apiKey = existingApiKey || await createApiKey(accessToken);
+      initHeader();
+      window.location.assign("/index.html");
+    } catch (err) {
+      const msg = err?.body?.errors?.[0]?.message || err?.body?.message || err?.message || "Login failed.";
+      feedback(msg, "error");
+    } finally {
+      setLoading(false);
+    }
+  });
+}
 
-  // Fetch credits (profile) after login
-  const credits = await fetchCredits(name, accessToken, apiKey);
-// Save everything once 
-saveSession({ accessToken, name, email, avatar, credits, apiKey });
+/**
+ * Wire the Register form (then auto-login):
+ * - Enforces @stud.noroff.no
+ * - Registers → logs in → ensures API key → saves session → refresh credits
+ * @returns {void}
+ */
+function wireRegister() {
+  const form = document.getElementById("register-form");
+  if (!form) return;
 
-// Redirect to profile
-window.location.assign("/profile.html");
-    });
-  }
+  const feedback = makeFeedback("register-feedback");
+  const setLoading = makeLoading("register-submit", "register-spinner");
 
-  // --- Register wiring ---
-  const registerForm = document.getElementById("register-form");
-  const registerFeedback = document.getElementById("register-feedback");
-  const registerBtn = document.getElementById("register-submit");
-  const registerSpinner = document.getElementById("register-spinner");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    feedback("");
+    setLoading(true);
 
-  if (registerForm) {
-    registerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      showFeedback(registerFeedback, "");
-      setLoading(registerBtn, registerSpinner, true);
-
-     
-      const form = Object.fromEntries(new FormData(registerForm));
-      const name = String(form.name || "").trim();
-      const email = String(form.email || "").trim();
-      const password = String(form.password || "");
+    try {
+      const fd = new FormData(form);
+      const name = String(fd.get("name") || "").trim();
+      const email = String(fd.get("email") || "").trim();
+      const password = String(fd.get("password") || "");
 
       if (!name || !email || !password) {
-        showFeedback(registerFeedback, "Please fill in all required fields.");
-        setLoading(registerBtn, registerSpinner, false);
+        feedback("Please fill out all fields.");
         return;
       }
       if (!isNoroffStudentEmail(email)) {
-        showFeedback(
-          registerFeedback,
-          "Email must be a valid @stud.noroff.no address."
-        );
-        setLoading(registerBtn, registerSpinner, false);
+        feedback("Use your @stud.noroff.no email.");
         return;
       }
 
-      const [res, err] = await handleError(
-        postJSON(AUTH_REGISTER, { name, email, password })
-      );
+      // 1) Register
+      await register({ name, email, password });
 
-      if (err) {
-        const apiMsg =
-          (err.body && (err.body.errors?.[0]?.message || err.body.message)) ||
-          err.message;
-        showFeedback(
-          registerFeedback,
-          apiMsg || "Registration failed. Please check your details."
-        );
-        setLoading(registerBtn, registerSpinner, false);
-        return;
+      // 2) Auto-login
+      const { accessToken, avatar } = await login(email, password);
+
+      // 3) API key: reuse or create
+      let apiKey = localStorage.getItem("auth.apiKey") || "";
+      if (!apiKey) {
+        apiKey = await createApiKey(accessToken);
       }
 
-      // Success: inform and suggest login
-      showFeedback(
-        registerFeedback,
-        "Account created. You may now log in.",
-        "success"
-      );
+      saveSession({ accessToken, apiKey, name, email, avatar, credits: 0 });
+      await refreshCreditsFromServer();
 
-      // Optionally auto-fill login email
-      const loginEmail = document.getElementById("login-email");
-      if (loginEmail) loginEmail.value = email;
-
-      setLoading(registerBtn, registerSpinner, false);
-      // Optionally scroll to login
-      document.getElementById("login-heading")?.scrollIntoView({ behavior: "smooth" });
-    });
-  }
+      feedback("Account created! Redirecting…", "success");
+      initHeader();
+      setTimeout(() => window.location.assign("/profile.html"), 400);
+    } catch (err) {
+      const msg = err?.body?.errors?.[0]?.message || err?.body?.message || err?.message || "Registration failed.";
+      feedback(msg, "error");
+    } finally {
+      setLoading(false);
+    }
+  });
 }
 
-// Initialize when this script is loaded on auth.html
-initAuthPage();
+/** Entry point: wire whichever form exists on this page. */
+(function initAuthPage() {
+  wireLogin();
+  wireRegister();
+})();
