@@ -1,38 +1,38 @@
-
 /**
  * Here we define all the API endpoints used in the application.
  */
 
- // Base URL for the Noroff v2 API.
- 
-
 export const API_BASE = "https://v2.api.noroff.dev";
+export const AUCTION_BASE = `${API_BASE}/auction`;
 
-//Auth:
+// Auth
 export const AUTH_CREATE_API_KEY = `${API_BASE}/auth/create-api-key`;
 export const AUTH_REGISTER = `${API_BASE}/auth/register`;
 export const AUTH_LOGIN = `${API_BASE}/auth/login`;
 
-//Profiles: 
+// Profiles
 export const PROFILE_URL = (name) =>
-  `${API_BASE}/auction/profiles/${encodeURIComponent(name)}`;
+  `${AUCTION_BASE}/profiles/${encodeURIComponent(name)}`;
 
 export const PROFILE_LISTINGS_URL = (name) =>
-  `${API_BASE}/auction/profiles/${encodeURIComponent(name)}/listings`;
+  `${AUCTION_BASE}/profiles/${encodeURIComponent(name)}/listings`;
 
 export const PROFILE_BIDS_URL = (name) =>
-  `${API_BASE}/auction/profiles/${encodeURIComponent(name)}/bids`;
+  `${AUCTION_BASE}/profiles/${encodeURIComponent(name)}/bids`;
 
-//Listings:
-export const LISTINGS_URL = `${API_BASE}/auction/listings`;
+export const PROFILE_WINS_URL = (name) =>
+  `${AUCTION_BASE}/profiles/${encodeURIComponent(name)}/wins`;
+
+// Listings
+export const LISTINGS_URL = `${AUCTION_BASE}/listings`;
 
 export const LISTING_URL = (id) =>
-  `${API_BASE}/auction/listings/${encodeURIComponent(id)}`;
+  `${LISTINGS_URL}/${encodeURIComponent(id)}`;
 
-//Bids:
+// Bids
+export const LISTING_BIDS_URL = (id) =>
+  `${LISTING_URL(id)}/bids`;
 
-export const PLACE_BID_URL = (listingId) =>
-  `${API_BASE}/auction/listings/${encodeURIComponent(listingId)}/bids`;
 
-export const LISTING_BIDS_URL = (listingId) =>
-  `${API_BASE}/auction/listings/${encodeURIComponent(listingId)}/bids`;
+// Backwards-compat (temporary). TODO: remove after refactor.
+export const PLACE_BID_URL = LISTING_BIDS_URL;
