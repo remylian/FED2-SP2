@@ -6,6 +6,7 @@
  * @param {Promise<T>} promise - The promise to resolve.
  * @returns {Promise<[T|null, Error|null]>}
  */
+
 export async function handleError(promise) {
   try {
     const data = await promise;
