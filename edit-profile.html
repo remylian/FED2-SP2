@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auction House — Edit Profile</title>
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
+    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <a href="/index.html" class="text-lg font-semibold">Auction House</a>
+      <div class="flex items-center gap-4">
+        <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
+        <a id="auth-links" href="/login.html" class="text-sm text-blue-600 hover:underline">Log in</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-4 py-8">
+    <a href="/profile.html" class="mb-4 inline-block text-sm text-blue-600 hover:underline">← Back to profile</a>
+    <h1 class="mb-6 text-3xl font-bold">Edit Profile</h1>
+
+    <section aria-labelledby="profile-editor" class="rounded-xl border bg-white p-6 shadow-sm">
+      <h2 id="profile-editor" class="mb-4 text-xl font-semibold">Profile details</h2>
+      <form id="profile-form" class="grid grid-cols-1 gap-4 md:grid-cols-2" novalidate>
+        <div class="md:col-span-2">
+          <label for="profile-bio" class="mb-1 block text-sm font-medium">Bio</label>
+          <textarea id="profile-bio" name="bio" rows="3"
+                    class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
+                    placeholder="Write a short bio..."></textarea>
+        </div>
+        <div>
+          <label for="profile-avatar-url" class="mb-1 block text-sm font-medium">Avatar URL</label>
+          <input id="profile-avatar-url" name="avatar" type="url"
+                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
+                 placeholder="https://…" />
+        </div>
+        <div>
+          <label for="profile-banner-url" class="mb-1 block text-sm font-medium">Banner URL</label>
+          <input id="profile-banner-url" name="banner" type="url"
+                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
+                 placeholder="https://…" />
+        </div>
+
+        <p id="profile-feedback" class="md:col-span-2 min-h-5 text-sm" role="alert" aria-live="polite"></p>
+
+        <div class="md:col-span-2 flex items-center gap-3">
+          <button id="profile-save" type="submit"
+                  class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
+            <span>Save changes</span>
+            <svg id="profile-spinner" class="ml-2 hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4A4 4 0 0 0 8 12H4z"></path>
+            </svg>
+          </button>
+          <a href="/profile.html" class="text-sm text-gray-600 hover:underline">Cancel</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="mt-16 border-t bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
+      © <span id="year"></span> Auction House
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

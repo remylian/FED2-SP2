@@ -1,15 +1,14 @@
-<!-- Create/Update listing form (title, description, images, endsAt). --><!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Auction House — Create Listing</title>
+  <title>Auction House — Edit Listing</title>
   <script type="module" src="/src/main.js"></script>
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-900">
-  <!-- Header -->
   <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
-    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
       <a href="/index.html" class="text-lg font-semibold">Auction House</a>
       <div class="flex items-center gap-4">
         <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
@@ -20,55 +19,43 @@
 
   <main class="mx-auto max-w-3xl px-4 py-8">
     <a href="/profile.html" class="mb-4 inline-block text-sm text-blue-600 hover:underline">Back to profile</a>
-    <h1 class="mb-6 text-3xl font-bold">Create a new listing</h1>
+    <h1 class="mb-6 text-3xl font-bold">Edit listing</h1>
 
     <section class="rounded-xl border bg-white p-6 shadow-sm">
       <form id="listing-form" class="space-y-5" novalidate>
         <div>
           <label for="title" class="mb-1 block text-sm font-medium">Title <span class="text-red-600">*</span></label>
-          <input id="title" name="title" type="text" required
-                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
-                 placeholder="Vintage camera, gaming console, etc." />
+          <input id="title" name="title" type="text" required class="w-full rounded-lg border px-3 py-2 outline-none focus:ring" />
         </div>
 
         <div>
           <label for="description" class="mb-1 block text-sm font-medium">Description</label>
-          <textarea id="description" name="description" rows="4"
-                    class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
-                    placeholder="Describe condition, included accessories, etc."></textarea>
+          <textarea id="description" name="description" rows="4" class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"></textarea>
         </div>
 
         <div>
           <label for="endsAt" class="mb-1 block text-sm font-medium">Ends at <span class="text-red-600">*</span></label>
-          <input id="endsAt" name="endsAt" type="datetime-local" required
-                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring" />
-          <p class="mt-1 text-xs text-gray-500">Choose a future date/time.</p>
+          <input id="endsAt" name="endsAt" type="datetime-local" required class="w-full rounded-lg border px-3 py-2 outline-none focus:ring" />
+          <p class="mt-1 text-xs text-gray-500">Must be a future date/time.</p>
         </div>
 
-        <!-- Media URLs -->
         <fieldset>
           <legend class="mb-2 text-sm font-medium">Images (URLs)</legend>
-          <div id="media-list" class="space-y-2">
-            <!-- JS seeds one input on load -->
-          </div>
-          <button id="media-add" type="button"
-                  class="mt-2 rounded-lg border px-3 py-1 text-sm hover:bg-gray-50">
-            + Add image URL
-          </button>
+          <div id="media-list" class="space-y-2"><!-- JS pre-fills --></div>
+          <button id="media-add" type="button" class="mt-2 rounded-lg border px-3 py-1 text-sm hover:bg-gray-50">+ Add image URL</button>
         </fieldset>
 
         <p id="form-feedback" class="min-h-5 text-sm" role="alert" aria-live="polite"></p>
 
         <div class="flex items-center gap-3">
-          <button id="form-submit" type="submit"
-                  class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
-            <span>Create listing</span>
+          <button id="form-submit" type="submit" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
+            <span>Update listing</span>
             <svg id="form-spinner" class="ml-2 hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4A4 4 0 0 0 8 12H4z"></path>
             </svg>
           </button>
-          <a href="/index.html" class="text-sm text-gray-600 hover:underline">Cancel</a>
+          <a id="cancel-link" href="#" class="text-sm text-gray-600 hover:underline">Cancel</a>
         </div>
       </form>
     </section>
@@ -80,8 +67,6 @@
     </div>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

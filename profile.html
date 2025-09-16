@@ -29,57 +29,32 @@
         <img id="profile-avatar" alt="Profile avatar"
              class="h-20 w-20 rounded-full border-4 border-white bg-gray-300 object-cover"
              src="" />
-        <div class="flex-1">
-          <h2 id="profile-header" class="text-xl font-semibold">
-            <span id="profile-name">User</span>
-          </h2>
-          <p id="profile-email" class="text-sm text-gray-600">your.name@stud.noroff.no</p>
-        </div>
-        <div class="text-right">
-          <span id="profile-credits" class="inline-flex items-center justify-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-            0 credits
-          </span>
-        </div>
+             <div class="flex-1">
+               <h2 id="profile-header" class="text-xl font-semibold">
+                 <span id="profile-name">User</span>
+                </h2>
+                <p id="profile-email" class="text-sm text-gray-600">your.name@stud.noroff.no</p>
+              </div>
+              <div class="text-right">
+                <span id="profile-credits" class="inline-flex items-center justify-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+                  0 credits
+                </span>
+              </div>
+            </div>
+          </section>
+          
+        
+      
+    <section aria-labelledby="profile-bio-section" class="mb-10 rounded-xl border bg-white p-6 shadow-sm">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 id="profile-bio-section" class="text-xl font-semibold">Bio</h2>
+        <a href="/edit-profile.html" class="text-sm text-blue-600 hover:underline">Edit profile</a>
       </div>
+      <p id="profile-bio-display" class="whitespace-pre-wrap text-gray-800">
+        <!-- populated by profile.js -->
+      </p>
     </section>
 
-    <!-- Profile editor -->
-    <section aria-labelledby="profile-editor" class="mb-10 rounded-xl border bg-white p-6 shadow-sm">
-      <h2 id="profile-editor" class="mb-4 text-xl font-semibold">Edit Profile</h2>
-      <form id="profile-form" class="grid grid-cols-1 gap-4 md:grid-cols-2" novalidate>
-        <div class="md:col-span-2">
-          <label for="profile-bio" class="mb-1 block text-sm font-medium">Bio</label>
-          <textarea id="profile-bio" name="bio" rows="3"
-                    class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
-                    placeholder="Write a short bio..."></textarea>
-        </div>
-        <div>
-          <label for="profile-avatar-url" class="mb-1 block text-sm font-medium">Avatar URL</label>
-          <input id="profile-avatar-url" name="avatar" type="url"
-                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
-                 placeholder="https://…" />
-        </div>
-        <div>
-          <label for="profile-banner-url" class="mb-1 block text-sm font-medium">Banner URL</label>
-          <input id="profile-banner-url" name="banner" type="url"
-                 class="w-full rounded-lg border px-3 py-2 outline-none focus:ring"
-                 placeholder="https://…" />
-        </div>
-
-        <p id="profile-feedback" class="md:col-span-2 min-h-5 text-sm text-red-600" role="alert" aria-live="polite"></p>
-
-        <div class="md:col-span-2 flex items-center gap-3">
-          <button id="profile-save" type="submit"
-                  class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60">
-            <span>Save changes</span>
-            <svg id="profile-spinner" class="ml-2 hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4A4 4 0 0 0 8 12H4z"></path>
-            </svg>
-          </button>
-        </div>
-      </form>
-    </section>
 
     <!-- Tabs/sections for listings & bids -->
     <section class="mb-8">
@@ -108,6 +83,13 @@
           </div>
           <p id="my-bids-empty" class="mt-2 text-sm text-gray-500">You haven’t placed any bids yet.</p>
         </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">My wins</h2>
+          <div id="my-wins-empty" class="text-sm text-gray-500 hidden">No wins yet.</div>
+          <div id="my-wins" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+        </section>
+
       </div>
     </section>
   </main>
