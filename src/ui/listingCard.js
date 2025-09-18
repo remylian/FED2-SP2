@@ -1,4 +1,4 @@
-// src/ui/listingCard.js
+
 import { getSession } from "../utils/session.js";
 import { normalizeMedia } from "../utils/media.js";
 
@@ -7,6 +7,7 @@ import { normalizeMedia } from "../utils/media.js";
  * @param {{amount?:number}[]=} bids
  * @returns {number}
  */
+
 function highestBid(bids = []) {
   if (!Array.isArray(bids) || bids.length === 0) return 0;
   return bids.reduce((m, b) => (Number(b?.amount) > m ? Number(b.amount) : m), 0);
@@ -19,6 +20,7 @@ function highestBid(bids = []) {
  * @param {string} sellerName
  * @returns {string}
  */
+
 function sellerLinkHTML(sellerName) {
   if (!sellerName) return "";
   const { token, apiKey } = getSession();
@@ -36,6 +38,7 @@ function sellerLinkHTML(sellerName) {
  * @param {{ showSellerLink?: boolean }} [opts]
  * @returns {HTMLElement}
  */
+
 export function createListingCard(item, { showSellerLink = true } = {}) {
   const id = item?.id;
   const title = item?.title || "Untitled";
@@ -50,7 +53,7 @@ export function createListingCard(item, { showSellerLink = true } = {}) {
 
   // image
   const imgHTML = img.url
-    ? `<img src="${img.url}" alt="${img.alt || ""}" class="h-44 w-full object-cover" />`
+    ? `<img src="${img.url}" loading="lazy" alt="${img.alt || ""}" class="h-44 w-full object-cover" />`
     : `<div class="h-44 w-full bg-gray-200"></div>`;
 
   // meta
