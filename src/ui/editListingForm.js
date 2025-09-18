@@ -1,15 +1,15 @@
+// src/ui/editListingForm.js
 import { isoToLocalInput, localToISO } from "../utils/dates.js";
-import { createMediaRow, collectMedia } from "./../ui/mediaFields.js";
+import { createMediaRow, collectMedia } from "./mediaFields.js";
 import { validateListingForm } from "../utils/validators.js";
 import { updateListing } from "../api/listings.js";
 import { makeFeedback, makeLoading } from "./feedback.js";
 
 /**
- * Prefill the edit form with listing data.
+ * Prefill the edit form with listing data, including media alt texts.
  * @param {any} item
  * @returns {void}
  */
-
 export function prefillEditListingForm(item) {
   const title = document.getElementById("title");
   const desc = document.getElementById("description");
@@ -22,24 +22,25 @@ export function prefillEditListingForm(item) {
 
   if (list) {
     list.innerHTML = "";
-    const urls = (Array.isArray(item?.media) ? item.media : [])
-      .map((m) => (typeof m === "string" ? m : m?.url))
-      .filter(Boolean);
-    if (urls.length === 0) {
-      list.appendChild(createMediaRow(""));
+    const arr = Array.isArray(item?.media) ? item.media : [];
+    if (arr.length === 0) {
+      list.appendChild(createMediaRow({ url: "", alt: "" }));
     } else {
-      for (const u of urls) list.appendChild(createMediaRow(u));
+      for (const m of arr) {
+        const url = typeof m === "string" ? m : (m?.url || "");
+        const alt = typeof m === "string" ? "" : (m?.alt || "");
+        list.appendChild(createMediaRow({ url, alt }));
+      }
     }
   }
 }
 
 /**
  * Wire the edit form submit: validate, PUT, redirect on success.
- * Uses ui/feedback.js closures bound to your markup IDs.
+ * Uses ui/feedback.js helpers bound to your markup IDs.
  * @param {{ id:string, onSuccess?: (id:string)=>void }} opts
  * @returns {void}
  */
-
 export function wireEditListingForm({ id, onSuccess }) {
   const feedback = makeFeedback("form-feedback");
   const setLoading = makeLoading("form-submit", "form-spinner");
@@ -51,7 +52,7 @@ export function wireEditListingForm({ id, onSuccess }) {
     addBtn.addEventListener("click", () => {
       const mediaList = document.getElementById("media-list");
       if (!mediaList) return;
-      const row = createMediaRow("");
+      const row = createMediaRow({ url: "", alt: "" });
       mediaList.appendChild(row);
       row.querySelector('input[name="media"]')?.focus();
     });
@@ -70,9 +71,8 @@ export function wireEditListingForm({ id, onSuccess }) {
       const description = String(fd.get("description") || "").trim();
       const endsAtISO = localToISO(String(fd.get("endsAt") || ""));
 
-      const media = collectMedia()
-        .filter((u) => { try { new URL(u); return true; } catch { return false; } })
-        .map((u) => ({ url: u }));
+      // Collect { url, alt }
+      const media = collectMedia();
 
       const valid = validateListingForm(title, endsAtISO);
       if (!valid.ok) {
@@ -86,7 +86,11 @@ export function wireEditListingForm({ id, onSuccess }) {
       if (typeof onSuccess === "function") onSuccess(id);
       else window.location.assign(`/listing.html?id=${encodeURIComponent(id)}`);
     } catch (err) {
-      const msg = err?.body?.errors?.[0]?.message || err?.body?.message || err?.message || "Failed to update listing.";
+      const msg =
+        err?.body?.errors?.[0]?.message ||
+        err?.body?.message ||
+        err?.message ||
+        "Failed to update listing.";
       feedback(msg, "error");
     } finally {
       setLoading(false);

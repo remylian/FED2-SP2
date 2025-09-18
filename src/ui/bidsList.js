@@ -30,7 +30,7 @@ function extractListingIdFromBid(b) {
 }
 
 /**
- * Render "My Bids" list with working links when an id is present.
+ * Render "My Bids" list.
  * @param {any[]} items
  * @returns {void}
  */
@@ -65,7 +65,7 @@ export function renderBidsList(items = []) {
         <a href="${href}" class="font-medium ${listingId ? "text-blue-600 hover:underline" : "text-gray-400 cursor-not-allowed"} line-clamp-1">
           ${label}
         </a>
-        <span class="text-gray-700">${amount}</span>
+        <span class="text-gray-700">Bid: ${amount}</span>
       </div>
       <div class="text-xs text-gray-500">${when}</div>
     `;

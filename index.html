@@ -6,70 +6,103 @@
   <title>Auction House — Home</title>
   <script type="module" src="/src/main.js"></script>
 </head>
-<body class="min-h-screen bg-gray-50 text-gray-900">
+<body class="flex min-h-screen flex-col bg-gray-50 text-gray-900">
   <!-- Header -->
-  <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
-    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-      <a href="/index.html" class="text-lg font-semibold">Auction House</a>
+<header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
+  <div class="container flex flex-col items-start py-3">
+    <a href="/" class="mb-2">
+      <img src="/logo.png" alt="site logo" class="h-16 w-auto">
+    </a>
+    <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 mb-0.5 text-sm font-medium text-emerald-700">0 credits</span>
+    <nav id="site-nav" class="flex w-full items-center justify-between">
+      <a href="/index.html" class="text-lg font-semibold hover:underline">All Listings</a>
       <div class="flex items-center gap-4">
-        <!-- Credits badge (initHeader handles this) -->
-        <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
         <a id="auth-links" href="/login.html" class="text-sm text-blue-600 hover:underline">Log in</a>
       </div>
     </nav>
-  </header>
+    <!-- Mobile nav (details/summary) -->
+<details id="mobile-nav" class="group sm:hidden mt-2">
+  <summary
+    class="flex items-center gap-2 cursor-pointer rounded-lg border px-3 py-2 text-sm select-none"
+    aria-label="Toggle menu"
+  >
+    <!-- Hamburger icon (shown when closed) -->
+    <svg class="h-5 w-5 group-open:hidden" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <!-- Close icon (shown when open) -->
+    <svg class="hidden h-5 w-5 group-open:block" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>Menu</span>
+    
+  </summary>
+  
+  <nav class="mt-2 flex flex-col gap-2 rounded-lg border bg-white p-3">
+    <a href="/index.html" class="text-sm">Home</a>
+    <a id="m-auth" href="/login.html" class="text-sm">Log in</a>
+    <a id="m-logout" href="#" class="text-sm hidden">Log out</a>
+  </nav>
+</details>
+
+  </div>
+</header>
+
+
 
   <!-- Main content -->
-  <main class="mx-auto max-w-6xl px-4 py-8">
-    <h1 class="mb-6 text-3xl font-bold">Active Listings</h1>
+  <main class="flex-1">
+    <div class="container py-8">
+      <h1 class="mb-6 text-3xl font-bold">Active Listings</h1>
 
-    <!-- Search + filter -->
-    <section aria-labelledby="search-section" class="mb-8">
-      <h2 id="search-section" class="sr-only">Search listings</h2>
-      <form id="search-form" class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label for="search-input" class="sr-only">Search</label>
-        <input id="search-input" name="q" type="search"
-               class="flex-1 rounded-lg border px-3 py-2 outline-none focus:ring"
-               placeholder="Search listings..." />
-        <button type="submit"
-                class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-          Search
-        </button>
-      </form>
-    </section>
+      <!-- Search + filter -->
+      <section aria-labelledby="search-section" class="mb-8">
+        <h2 id="search-section" class="sr-only">Search listings</h2>
+        <form id="search-form" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label for="search-input" class="sr-only">Search</label>
+          <input id="search-input" name="q" type="search"
+                class="flex-1 rounded-lg border px-3 py-2 outline-none focus:ring"
+                placeholder="Search listings..." />
+          <button type="submit"
+                  class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+            Search
+          </button>
+        </form>
+      </section>
 
-    <!-- Listings grid -->
-    <section aria-labelledby="listings-heading">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 id="listings-heading" class="text-xl font-semibold">Browse items</h2>
-        <div class="flex gap-2">
-          <label for="sort" class="sr-only">Sort by</label>
-          <select id="sort" name="sort"
-                  class="rounded-lg border px-2 py-1 text-sm outline-none focus:ring">
-            <option value="endsAt">Ending soon</option>
-            <option value="created">Newest first</option>
-            <option value="title">Title</option>
-          </select>
+      <!-- Listings grid -->
+      <section aria-labelledby="listings-heading">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 id="listings-heading" class="text-xl font-semibold">Browse items</h2>
+          <div class="flex gap-2">
+            <label for="sort" class="sr-only">Sort by</label>
+            <select id="sort" name="sort"
+                    class="rounded-lg border px-2 py-1 text-sm outline-none focus:ring">
+              <option value="endsAt">Ending soon</option>
+              <option value="created">Newest first</option>
+              <option value="title">Title</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div id="listings-grid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- Listing cards inserted here -->
-      </div>
+        <div id="listings-grid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Listing cards inserted here -->
+        </div>
 
-      <p id="listings-empty" class="mt-4 text-sm text-gray-500">
-        No listings found.
-      </p>
-    </section>
+        <p id="listings-empty" class="mt-4 text-sm text-gray-500">
+          No listings found.
+        </p>
+      </section>
 
-    <!-- Pagination -->
-    <nav id="pagination" class="mt-8 flex justify-center gap-2">
-      <!-- Page buttons inserted here -->
-    </nav>
+      <!-- Pagination -->
+      <nav id="pagination" class="mt-8 flex justify-center gap-2">
+        <!-- Page buttons inserted here -->
+      </nav>
+    </div> 
   </main>
 
   <!-- Footer -->
-  <footer class="mt-16 border-t bg-white">
+  <footer class="mt-auto border-t bg-white text-center ">
     <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
       © <span id="year"></span> Auction House
     </div>

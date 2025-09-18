@@ -6,19 +6,49 @@
   <title>Auction House — Edit Profile</title>
   <script type="module" src="/src/main.js"></script>
 </head>
-<body class="min-h-screen bg-gray-50 text-gray-900">
-  <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
-    <nav id="site-nav" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-      <a href="/index.html" class="text-lg font-semibold">Auction House</a>
+<body class="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+<header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
+  <div class="container flex flex-col items-start py-3">
+    <a href="/" class="mb-2">
+      <img src="/logo.png" alt="site logo" class="h-16 w-auto">
+    </a>
+    <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 mb-0.5 text-sm font-medium text-emerald-700">0 credits</span>
+    <nav id="site-nav" class="flex w-full items-center justify-between">
+      <a href="/index.html" class="text-lg font-semibold hover:underline">All Listings</a>
       <div class="flex items-center gap-4">
-        <span id="user-credits-badge" class="hidden rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">0 credits</span>
         <a id="auth-links" href="/login.html" class="text-sm text-blue-600 hover:underline">Log in</a>
       </div>
     </nav>
-  </header>
+    <!-- Mobile nav (details/summary) -->
+<details id="mobile-nav" class="group sm:hidden mt-2">
+  <summary
+    class="flex items-center gap-2 cursor-pointer rounded-lg border px-3 py-2 text-sm select-none"
+    aria-label="Toggle menu"
+  >
+    <!-- Hamburger icon (shown when closed) -->
+    <svg class="h-5 w-5 group-open:hidden" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <!-- Close icon (shown when open) -->
+    <svg class="hidden h-5 w-5 group-open:block" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span>Menu</span>
+    
+  </summary>
+  
+  <nav class="mt-2 flex flex-col gap-2 rounded-lg border bg-white p-3">
+    <a href="/index.html" class="text-sm">Home</a>
+    <a id="m-auth" href="/login.html" class="text-sm">Log in</a>
+    <a id="m-logout" href="#" class="text-sm hidden">Log out</a>
+  </nav>
+</details>
 
-  <main class="mx-auto max-w-3xl px-4 py-8">
-    <a href="/profile.html" class="mb-4 inline-block text-sm text-blue-600 hover:underline">← Back to profile</a>
+  </div>
+</header>
+
+  <main class="flex-1 mx-auto max-w-6xl px-4 py-8">
+    <a href="/profile.html" class="mb-4 inline-block text-sm text-blue-600 hover:underline">Back to profile</a>
     <h1 class="mb-6 text-3xl font-bold">Edit Profile</h1>
 
     <section aria-labelledby="profile-editor" class="rounded-xl border bg-white p-6 shadow-sm">
@@ -60,7 +90,7 @@
     </section>
   </main>
 
-  <footer class="mt-16 border-t bg-white">
+  <footer class="mt-auto border-t bg-white text-center py-4">
     <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600">
       © <span id="year"></span> Auction House
     </div>

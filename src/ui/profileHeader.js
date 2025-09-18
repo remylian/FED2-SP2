@@ -14,13 +14,11 @@ export function renderProfileHeader(p) {
   const emailEl = document.getElementById("profile-email");
   const avatarEl = document.getElementById("profile-avatar");
   const bannerEl = document.getElementById("profile-banner");
-  const creditsEl = document.getElementById("profile-credits");
   const bioOut = document.getElementById("profile-bio-display");
 
   if (nameEl) nameEl.textContent = p?.name ?? "User";
   if (emailEl) emailEl.textContent = p?.email ?? "—";
   if (avatarEl) avatarEl.src = avatarUrl || "";
   if (bannerEl) bannerEl.style.backgroundImage = bannerUrl ? `url("${bannerUrl}")` : "";
-  if (creditsEl) creditsEl.textContent = `${p?.credits ?? 0} credits`;
   if (bioOut) bioOut.textContent = bio || "No bio yet.";
 }

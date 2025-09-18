@@ -6,8 +6,12 @@ const file = (window.location.pathname.split("/").pop() || "index.html").toLower
 // Init header on every page
 initHeader();
 
-if (file === "login.html" || file === "register.html") {
-  import("./pages/auth.js");
+if (file === "login.html") {
+  import("./pages/login.js");
+}
+
+if (file === "register.html") {
+  import("./pages/register.js");
 }
 
 if (file === "index.html") {
