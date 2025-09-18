@@ -4,6 +4,7 @@
 
 export const API_BASE = "https://v2.api.noroff.dev";
 export const AUCTION_BASE = `${API_BASE}/auction`;
+export const LISTINGS_URL = `${AUCTION_BASE}/listings`;
 
 // Auth
 export const AUTH_CREATE_API_KEY = `${API_BASE}/auth/create-api-key`;
@@ -24,7 +25,6 @@ export const PROFILE_WINS_URL = (name) =>
   `${AUCTION_BASE}/profiles/${encodeURIComponent(name)}/wins`;
 
 // Listings
-export const LISTINGS_URL = `${AUCTION_BASE}/listings`;
 
 export const LISTING_URL = (id) =>
   `${LISTINGS_URL}/${encodeURIComponent(id)}`;
