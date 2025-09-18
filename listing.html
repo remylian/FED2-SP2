@@ -1,9 +1,10 @@
-<!-- Single listing view + bid history + place-bid form. --><!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="description" content="View photos, current highest bid, and bid history for this auction listing.">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <title>Listing — Auction House</title>
   <script type="module" src="/src/main.js"></script>
 </head>
@@ -74,8 +75,11 @@
         </div>
 
         <div class="mb-4">
-          <div class="text-sm text-gray-500">Ends</div>
-          <div id="listing-ends" class="font-medium">—</div>
+          <dd class="text-gray-800">
+            <span class="countdown-pill inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-gray-100 text-gray-700">
+              <span id="listing-ends" data-countdown data-ends=""></span>
+            </span>
+          </dd>
         </div>
 
         <div class="mb-6">
@@ -99,6 +103,7 @@
             <span id="delete-spinner" class="text-sm hidden">Deleting…</span>
           </div>
           <p id="delete-feedback" class="mt-2 text-sm"></p>
+            <button id="share-btn" class="rounded-lg border px-3 py-1 text-sm" aria-label="Copy link">Share listing!</button>
         </div>
         <!-- ▲ NEW END -->
 

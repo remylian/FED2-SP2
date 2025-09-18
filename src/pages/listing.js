@@ -1,10 +1,12 @@
-
 import { getListing } from "../api/listings.js";
 import { renderListingMeta } from "../ui/listingMeta.js";
 import { renderGallery } from "../ui/gallery.js";
 import { renderBidHistory } from "../ui/bidHistory.js";
 import { renderOwnerActions } from "../ui/ownerActions.js";
 import { wireBidForm } from "../ui/bidForm.js";
+import { setPageMeta } from "../ui/meta.js";
+import { showListingDetailSkeleton, withMinDelay } from "../ui/skeletons.js";
+import { wireCopyShare } from "../ui/share.js";
 
 /** Get ?id= */
 function getId() {
@@ -12,7 +14,7 @@ function getId() {
   return id ? id.trim() : null;
 }
 
-/** Load → render modules → wire bid form. */
+/** Load -> render modules -> wire bid form (+ meta). */
 async function initListingPage() {
   const titleEl = document.getElementById("listing-title");
   const subtitleEl = document.getElementById("listing-subtitle");
@@ -24,20 +26,52 @@ async function initListingPage() {
     return;
   }
 
+  // Show detail skeleton immediately
+  showListingDetailSkeleton({ galleryCount: 6 });
+
   try {
-    const item = await getListing(id, { includeSeller: true, includeBids: true });
+    // Enforce a tiny minimum delay so shimmer is visible 
+    const item = await withMinDelay(
+      getListing(id, { includeSeller: true, includeBids: true }),
+      300
+    );
+
+    // SEO/share meta
+    setPageMeta({
+      title: item?.title || "Listing",
+      description: (item?.description || "View photos, current highest bid, and bid history."),
+      image: (Array.isArray(item?.media) && item.media[0]?.url) || undefined,
+      type: "article",
+    });
+
+    // Render UI (these overwrite the skeletons)
     const meta = renderListingMeta(item);
     renderGallery(item.media);
     renderBidHistory(item.bids);
     renderOwnerActions(item);
-    wireBidForm(meta, { onReload: async () => {
-      const fresh = await getListing(id, { includeSeller: true, includeBids: true });
-      const nextMeta = renderListingMeta(fresh);
-      renderGallery(fresh.media);
-      renderBidHistory(fresh.bids);
-      renderOwnerActions(fresh);
-      return nextMeta;
-    }});
+    wireCopyShare("share-btn", () => location.href);
+
+    // Bid form with live refresh
+    wireBidForm(meta, {
+      onReload: async () => {
+        const fresh = await getListing(id, { includeSeller: true, includeBids: true });
+        const nextMeta = renderListingMeta(fresh);
+        renderGallery(fresh.media);
+        renderBidHistory(fresh.bids);
+        renderOwnerActions(fresh);
+
+
+        // refresh meta (optional)
+        setPageMeta({
+          title: fresh?.title || "Listing",
+          description: (fresh?.description || "View photos, current highest bid, and bid history."),
+          image: (Array.isArray(fresh?.media) && fresh.media[0]?.url) || undefined,
+          type: "article",
+        });
+
+        return nextMeta;
+      }
+    });
   } catch (e) {
     if (titleEl) titleEl.textContent = "Failed to load listing";
     if (subtitleEl) {

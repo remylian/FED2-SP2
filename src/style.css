@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+
+
 .container {
     @apply mx-auto w-full max-w-6xl px-4;
 }
@@ -9,3 +11,31 @@
 }
 
 #site-nav { @apply hidden sm:flex; };
+
+/* --- Skeleton shimmer --- */
+@keyframes ah-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.6) 50%,
+    rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: ah-shimmer 1.2s infinite;
+  pointer-events: none;
+}
+.dark .shimmer::after {
+  background: linear-gradient(90deg,
+    rgba(0,0,0,0) 0%,
+    rgba(255,255,255,.08) 50%,
+    rgba(0,0,0,0) 100%);
+}

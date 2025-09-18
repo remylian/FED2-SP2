@@ -2,6 +2,8 @@ import { getJSON } from "../api/client.js";
 import { handleError } from "../utils/handleError.js";
 import { LISTINGS_URL } from "../config/endpoints.js";
 import { createListingCard } from "../ui/listingCard.js";
+import { initCountdowns } from "../ui/countdown.js";
+import { showGridSkeleton } from "../ui/skeletons.js";
 
 /**
  * Read state from current URL (q, sort, page) with defaults.
@@ -53,6 +55,8 @@ function buildListingsURL({ q, sort, page, limit = 12 }) {
   return `${base}?${sp.toString()}`;
 }
 
+showGridSkeleton ({gridId: "my-listings-grid", emptyId: "my-listings-empty", count: 8});
+
 /**
  * Render listings into the grid and toggle empty state.
  * @param {any[]} items
@@ -73,6 +77,7 @@ function renderListings(items = []) {
     grid.appendChild(createListingCard(it, { showSellerLink: true }));
   }
 }
+ initCountdowns();
 
 /**
  * Render Prev/Next pagination using meta.pageCount when available.
@@ -173,6 +178,7 @@ function initControls() {
  */
 
 function initIndexPage() {
+  showGridSkeleton({ gridId: "listings-grid", emptyId: "listings-empty", count: 8 });
   initControls();
   loadAndRender();
 }

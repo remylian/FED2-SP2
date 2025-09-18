@@ -4,9 +4,10 @@ import { getProfile, getProfileListings } from "../api/profile.js";
 import { renderSellerHeader } from "../ui/sellerHeader.js";
 import { renderMyListingsGrid } from "../ui/myListingsGrid.js";
 import { handleError } from "../utils/handleError.js";
+import { showGridSkeleton } from "../ui/skeletons.js";
 
 /**
- * Require auth for viewing seller profiles (Profiles v2 endpoints are authenticated).
+ * Require auth for viewing seller profiles.
  * Redirects to login with ?next= so we can bounce back after login.
  * @returns {boolean} true if allowed to continue
  */
@@ -41,6 +42,9 @@ async function initSellerPage() {
     }
     return;
   }
+
+  // Show skeletons in the listings grid immediately
+  showGridSkeleton({ gridId: "seller-listings", emptyId: "seller-listings-empty", count: 6 });
 
   // Load seller profile
   const [profile, pErr] = await handleError(getProfile(name));

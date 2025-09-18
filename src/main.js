@@ -1,10 +1,12 @@
 import "./style.css";
 import { initHeader } from "./ui/header.js";
+import { startCountdownLoop } from "./ui/countdown.js";
 
 const file = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
 
 // Init header on every page
 initHeader();
+startCountdownLoop();
 
 if (file === "login.html") {
   import("./pages/login.js");
@@ -43,5 +45,7 @@ if (file === "seller.html") {
 }
 
 
-console.log("Auction House app initialized:", file);
+if (import.meta.env.DEV) {
+  console.log("Auction House app initialized:", file);
+}
  

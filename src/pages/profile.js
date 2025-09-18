@@ -1,4 +1,3 @@
-
 import { getSession } from "../utils/session.js";
 import { getProfile, getProfileListings, getProfileBids, getProfileWins } from "../api/profile.js";
 import { renderProfileHeader } from "../ui/profileHeader.js";
@@ -6,7 +5,7 @@ import { renderBidsList } from "../ui/bidsList.js";
 import { renderMyListingsGrid } from "../ui/myListingsGrid.js";
 import { handleError } from "../utils/handleError.js";
 import { initHeader } from "../ui/header.js";
-
+import { showGridSkeleton } from "../ui/skeletons.js";
 
 /**
  * Keep localStorage auth.user (credits/avatar) in sync with fresh profile.
@@ -34,6 +33,10 @@ async function initProfilePage() {
     return;
   }
 
+  // Show grid skeletons immediately
+  showGridSkeleton({ gridId: "my-listings", emptyId: "my-listings-empty", count: 6 });
+  showGridSkeleton({ gridId: "my-wins", emptyId: "my-wins-empty", count: 6 });
+
   // Load profile
   const [profile, profileErr] = await handleError(getProfile(user.name));
   if (profileErr) {
@@ -48,19 +51,19 @@ async function initProfilePage() {
   syncSessionFromProfile(profile);
   initHeader();
 
+  // Wins (with seller links)
   const [{ items: wins }, winsErr] = await handleError(
-  getProfileWins(user.name, { page: 1, limit: 12, includeBids: true, includeSeller: true })
-);
-if (winsErr) console.warn("Failed to load wins:", winsErr);
+    getProfileWins(user.name, { page: 1, limit: 12, includeBids: true, includeSeller: true })
+  );
+  if (winsErr) console.warn("Failed to load wins:", winsErr);
 
-// Show seller link on wins so the buyer can revisit the seller
-renderMyListingsGrid(wins || [], {
-  gridId: "my-wins",
-  emptyId: "my-wins-empty",
-  showSellerLink: true,
-});
+  renderMyListingsGrid(wins || [], {
+    gridId: "my-wins",
+    emptyId: "my-wins-empty",
+    showSellerLink: true,
+  });
 
-  // Load listings & bids in parallel
+  // Listings & bids in parallel
   const [listings, listingsErr] = await handleError(
     getProfileListings(user.name, { includeBids: true, includeSeller: true })
   );
