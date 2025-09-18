@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Auction House logo" width="120" />
+  <img src="/public/logo.png" alt="Auction House logo" width="120" />
 </p>
 
 # Auction House
