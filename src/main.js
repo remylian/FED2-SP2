@@ -2,50 +2,39 @@ import "./style.css";
 import { initHeader } from "./ui/header.js";
 import { startCountdownLoop } from "./ui/countdown.js";
 
-const file = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+// robust route detection
+function getSlug() {
+  // e.g. "/", "/index", "/index.html", "/create-listing", "/create-listing.html"
+  let p = window.location.pathname.toLowerCase();
+  if (p === "/" || p.endsWith("/")) p += "index.html";
+  const last = p.split("/").pop();         // "index.html" or "create-listing"
+  return last.replace(/\.html$/, "");      // -> "index", "create-listing"
+}
 
-// Init header on every page
+const slug = getSlug();
+
+// Init header + global widgets on every page
 initHeader();
 startCountdownLoop();
 
-if (file === "login.html") {
-  import("./pages/login.js");
-}
+// Map slugs to page modules
+const routes = {
+  index: "./pages/index.js",
+  login: "./pages/login.js",
+  register: "./pages/register.js",
+  listing: "./pages/listing.js",
+  profile: "./pages/profile.js",
+  seller: "./pages/seller.js",
+  "create-listing": "./pages/create-listing.js",
+  "edit-listing": "./pages/edit-listing.js",
+  "edit-profile": "./pages/edit-profile.js",
+};
 
-if (file === "register.html") {
-  import("./pages/register.js");
+// Dynamic import if we have a match
+if (routes[slug]) {
+  import(routes[slug]);
 }
-
-if (file === "index.html") {
-  import("./pages/index.js");
-}
-
-if (file === "listing.html") {
-  import("./pages/listing.js");
-}
-
-if (file === "profile.html") {
-  import("./pages/profile.js");
-}
-
-if (file === "create-listing.html") {
-  import("./pages/create-listing.js");
-}
-
-if (file === "edit-profile.html") {
-  import("./pages/edit-profile.js");
-}
-
-if (file === "edit-listing.html") {
-  import("./pages/edit-listing.js");
-}
-
-if (file === "seller.html") {
-  import("./pages/seller.js");
-}
-
 
 if (import.meta.env.DEV) {
-  console.log("Auction House app initialized:", file);
+  console.log("Auction House initialized, slug:", slug);
 }
- 
