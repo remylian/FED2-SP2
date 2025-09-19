@@ -1,26 +1,38 @@
-// src/ui/listingMeta.js
+
 import { fmtDate } from "../utils/dates.js";
 
-/**
- * Compute the highest bid from an array.
- * @param {{amount?:number}[]=} bids
- * @returns {number}
- */
-function highestBid(bids = []) {
-  if (!Array.isArray(bids) || !bids.length) return 0;
-  return bids.reduce((m, b) => (Number(b?.amount) > m ? Number(b.amount) : m), 0);
+/** Safely resolve a bidder's display name from common API shapes. */
+function getBidderName(b) {
+  if (b?.bidder && typeof b.bidder === "object" && b.bidder.name) return b.bidder.name;
+  if (typeof b?.bidder === "string") return b.bidder;
+  if (b?.bidderName) return b.bidderName;
+  if (b?.user?.name) return b.user.name;
+  if (b?.name) return b.name;
+  return "";
+}
+
+/** Find the highest bid and its bidder name. */
+function topBid(bids = []) {
+  if (!Array.isArray(bids) || bids.length === 0) return { amount: 0, name: "" };
+  let top = { amount: 0, name: "" };
+  for (const b of bids) {
+    const amt = Number(b?.amount ?? 0);
+    if (amt > top.amount) top = { amount: amt, name: getBidderName(b) };
+  }
+  return top;
 }
 
 /**
- * Render listing meta: title, subtitle, highest, ends, seller link, description.
- * Also injects a live countdown pill into #listing-ends (no HTML change needed).
+ * Render listing meta and return a meta summary for the bid form.
  * @param {any} item
- * @returns {{ id:string, highest:number, sellerName:string, ended:boolean }}
+ * @returns {{ id:string, highest:number, sellerName:string, ended:boolean, highestBidderName:string }}
  */
+
 export function renderListingMeta(item) {
   const { id, title, description, endsAt, seller, bids } = item || {};
-  const highest = highestBid(bids);
   const sellerName = seller?.name ?? "";
+  const { amount: highest, name: highestBidderNameRaw } = topBid(bids);
+  const highestBidderName = String(highestBidderNameRaw || "");
   const endMs = endsAt ? new Date(endsAt).getTime() : 0;
   const ended = !!endMs && endMs <= Date.now();
 
@@ -29,7 +41,8 @@ export function renderListingMeta(item) {
   const subtitleEl = document.getElementById("listing-subtitle");
   if (titleEl) titleEl.textContent = title || "Untitled";
   if (subtitleEl) {
-    subtitleEl.textContent = `Seller: ${sellerName || "unknown"} • Highest bid: ${highest} • Ends: ${fmtDate(endsAt)}`;
+    const endsTxt = endsAt ? fmtDate(endsAt) : "—";
+    subtitleEl.textContent = `Seller: ${sellerName || "unknown"} • Highest bid: ${highest} • Ends: ${endsTxt}`;
   }
 
   // Highest / Seller
@@ -42,11 +55,7 @@ export function renderListingMeta(item) {
       : "—";
   }
 
-  // Description
-  const descEl = document.getElementById("listing-description");
-  if (descEl) descEl.textContent = description || "No description.";
-
-  // Ends: inject a countdown pill that the countdown loop can pick up
+  // Ends: live countdown pill (consumed by the global loop)
   const endsEl = document.getElementById("listing-ends");
   if (endsEl) {
     if (endsAt) {
@@ -60,5 +69,9 @@ export function renderListingMeta(item) {
     }
   }
 
-  return { id, highest, sellerName, ended };
+  // Description
+  const descEl = document.getElementById("listing-description");
+  if (descEl) descEl.textContent = description || "No description.";
+
+  return { id, highest, sellerName, ended, highestBidderName };
 }
