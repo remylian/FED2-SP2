@@ -95,7 +95,7 @@ function renderPagination({ page, pageCount }) {
     b.type = "button";
     b.textContent = label;
     b.disabled = disabled;
-    b.className = `rounded-lg border px-3 py-1 text-sm ${disabled ? "opacity-50" : "hover:bg-gray-100"}`;
+    b.className = `rounded-lg border px-3 py-1 bg-white text-sm ${disabled ? "opacity-60" : "hover:bg-gray-100"}`;
     if (!disabled) {
       b.addEventListener("click", () => {
         updateURL({ page: nextPage });

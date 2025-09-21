@@ -52,8 +52,6 @@
   </div>
 </header>
 
-
-
   <!-- Main content -->
   <main class="flex-1">
     <div class="container py-8">
@@ -65,7 +63,7 @@
         <form id="search-form" class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <label for="search-input" class="sr-only">Search</label>
           <input id="search-input" name="q" type="search"
-                class="flex-1 rounded-lg border px-3 py-2 outline-none focus:ring"
+                class="flex-1 rounded-lg border px-3 py-2 bg-white outline-none focus:ring"
                 placeholder="Search listings..." />
           <button type="submit"
                   class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
@@ -81,7 +79,7 @@
           <div class="flex gap-2">
             <label for="sort" class="sr-only">Sort by</label>
             <select id="sort" name="sort"
-                    class="rounded-lg border px-2 py-1 text-sm outline-none focus:ring">
+                    class="rounded-lg border px-2 py-1 text-sm bg-white outline-none focus:ring">
               <option value="endsAt">Ending soon</option>
               <option value="created">Newest first</option>
               <option value="title">Title</option>

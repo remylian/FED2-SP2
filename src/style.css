@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-  
+body {@apply bg-[#f0e6c0]};  
 
 .container {
     @apply mx-auto w-full max-w-6xl px-4;
