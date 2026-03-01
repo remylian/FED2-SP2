@@ -1,4 +1,3 @@
-
 import { getSession } from "../utils/session.js";
 import { normalizeMedia } from "../utils/media.js";
 
@@ -9,8 +8,8 @@ import { normalizeMedia } from "../utils/media.js";
  */
 
 function highestBid(bids = []) {
-  if (!Array.isArray(bids) || bids.length === 0) return 0;
-  return bids.reduce((m, b) => (Number(b?.amount) > m ? Number(b.amount) : m), 0);
+	if (!Array.isArray(bids) || bids.length === 0) return 0;
+	return bids.reduce((m, b) => (Number(b?.amount) > m ? Number(b.amount) : m), 0);
 }
 
 /**
@@ -22,14 +21,14 @@ function highestBid(bids = []) {
  */
 
 function sellerLinkHTML(sellerName) {
-  if (!sellerName) return "";
-  const { token, apiKey } = getSession();
-  if (token && apiKey) {
-    return `<a href="/seller.html?name=${encodeURIComponent(
-      sellerName
-    )}" class="text-sm text-blue-600 hover:underline">${sellerName}</a>`;
-  }
-  return `<span class="text-sm text-gray-400" title="Log in to view seller profiles">${sellerName}</span>`;
+	if (!sellerName) return "";
+	const { token, apiKey } = getSession();
+	if (token && apiKey) {
+		return `<a href="/seller.html?name=${encodeURIComponent(
+			sellerName,
+		)}" class="text-sm text-blue-600 hover:underline">${sellerName}</a>`;
+	}
+	return `<span class="text-sm text-gray-400" title="Log in to view seller profiles">${sellerName}</span>`;
 }
 
 /**
@@ -40,32 +39,32 @@ function sellerLinkHTML(sellerName) {
  */
 
 export function createListingCard(item, { showSellerLink = true } = {}) {
-  const id = item?.id;
-  const title = item?.title || "Untitled";
-  const sellerName = item?.seller?.name || "";
-  const img = normalizeMedia(item?.media)[0] || { url: "", alt: "" };
-  const highest = highestBid(item?.bids);
-  const endsAt = item?.endsAt; // ISO string (optional)
+	const id = item?.id;
+	const title = item?.title || "Untitled";
+	const sellerName = item?.seller?.name || "";
+	const img = normalizeMedia(item?.media)[0] || { url: "", alt: "" };
+	const highest = highestBid(item?.bids);
+	const endsAt = item?.endsAt; // ISO string (optional)
 
-  const card = document.createElement("article");
-  card.className =
-    "rounded-xl border overflow-hidden bg-white shadow-sm hover:shadow transition";
+	const card = document.createElement("article");
+	card.className =
+		"rounded-xl  overflow-hidden bg-white shadow-sm hover:shadow-md hover:shadow-gray-500 transition-shadow duration-100";
 
-  // image
-  const imgHTML = img.url
-    ? `<img src="${img.url}" loading="lazy" alt="${img.alt || ""}" class="h-44 w-full object-cover" />`
-    : `<div class="h-44 w-full bg-gray-200"></div>`;
+	// image
+	const imgHTML = img.url
+		? `<img src="${img.url}" loading="lazy" alt="${img.alt || ""}" class="h-44 w-full object-cover" />`
+		: `<div class="h-44 w-full bg-gray-200"></div>`;
 
-  // meta
-  const sellerHTML = showSellerLink ? sellerLinkHTML(sellerName) : "";
-  const highestHTML = `<span class="text-sm text-gray-700">Highest: <strong>${highest}</strong></span>`;
-  const endsHTML = endsAt
-    ? `<span class="countdown-pill inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-gray-100 text-gray-700">
+	// meta
+	const sellerHTML = showSellerLink ? sellerLinkHTML(sellerName) : "";
+	const highestHTML = `<span class="text-sm text-gray-700">Highest: <strong>${highest}</strong></span>`;
+	const endsHTML = endsAt
+		? `<span class="countdown-pill inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-gray-100 text-gray-700">
          <span data-countdown data-ends="${endsAt}"></span>
        </span>`
-    : "";
+		: "";
 
-  card.innerHTML = `
+	card.innerHTML = `
     <a href="/listing.html?id=${encodeURIComponent(id)}" class="block">
       ${imgHTML}
       <div class="p-3">
@@ -81,5 +80,5 @@ export function createListingCard(item, { showSellerLink = true } = {}) {
     </a>
   `;
 
-  return card;
+	return card;
 }
